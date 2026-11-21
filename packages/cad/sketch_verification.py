@@ -76,6 +76,7 @@ def sketch_evidence(reading, solved, *, bar_plan=None):
         views["bar_views"] = {
             "width": bar_plan.face_width, "thickness": bar_plan.stock_thickness,
             "length_callout": bar_plan.written_length,
+            "stock_size_needs_check": bar_plan.stock_check,
             "rod_marks_by_bar": [len(row) for row in bar_plan.rods],
             "rod_positions": "Approximate from the sketch. No confirmed count, pitch or offsets.",
         }

@@ -104,6 +104,8 @@ def draw_bar_views(c, plan, dimension, rod_callout=None, *, rods_withheld=False,
     write(c, 42, 375, "ASSEMBLY / TOP VIEW", 17, True, black)
     position_note = "Approximate rod positions" if any(plan.rods) else "Rod locations open" if rods_withheld else ""
     fit(c, 42, 357, "  /  ".join(filter(None, ("Bar spacing and placement shown schematically", position_note))), 826, 10.5)
+    if plan.stock_check:
+        write(c, 934, 354, "Stock size read from sketch. Check.", 10.5, color=black)
 
     # Reserve the same horizontal span for both projections. Tying the scale to the
     # stock dimensions keeps both the wide face and the edge in proportion to the length.
@@ -184,3 +186,33 @@ def draw_bar_views(c, plan, dimension, rod_callout=None, *, rods_withheld=False,
         fit_up += ["Rod count, pitch, offsets and attachment"]
     for i, label in enumerate(fit_up):
         write(c, 934, 126 - i * 14, label, 10.5, color=black)
+
+
+def draw_stock_views(c, stock, length, dimension):
+    """Show the written size of a bar without supplying missing assembly positions."""
+    write(c, 44, 630, "BAR STOCK / REVIEW VIEWS", 15, True, black)
+    if stock.check:
+        write(c, 44, 608, "Stock size read from sketch. Check before labeling cut stock.", 11, color=black)
+    if length:
+        scale = min(563 / length, 68 / stock.width, 60 / stock.thickness)
+        left, right = 122, 122 + length * scale
+        c.setStrokeColor(black)
+        c.setLineWidth(1)
+        for title, y, size in (("TOP VIEW", 460, stock.width), ("SIDE VIEW", 332, stock.thickness)):
+            write(c, 44, y + 75, title, 12, True, black)
+            height = size * scale
+            c.rect(left, y, right - left, height)
+            _vertical_dimension(c, left - 18, y, y + height, left - 2, dimension(size))
+        _horizontal_dimension(c, left, right, 306, 330, dimension(length) + " REF")
+    else:
+        write(c, 44, 528, "Overall length needs confirmation for the top and side views.", 11, color=black)
+
+    write(c, 44, 258, "END VIEW", 12, True, black)
+    scale = min(166 / stock.width, 95 / stock.thickness)
+    width, height = stock.width * scale, stock.thickness * scale
+    left, bottom = 122, 138
+    c.setStrokeColor(black)
+    c.setLineWidth(1)
+    c.rect(left, bottom, width, height)
+    _horizontal_dimension(c, left, left + width, bottom - 15, bottom - 3, dimension(stock.width))
+    _vertical_dimension(c, left - 18, bottom, bottom + height, left - 2, dimension(stock.thickness))

@@ -12,15 +12,17 @@ from reportlab.lib.colors import black
 from reportlab.lib.utils import ImageReader, simpleSplit
 from reportlab.pdfgen.canvas import Canvas
 
-from .bar_views import broad_face, draw_bar_views, pictured_rods
+from packages.ai.sketch_parser import MappedPart
+
+from .bar_views import broad_face, draw_bar_views, draw_stock_views, pictured_rods
 from .constraint_solver import measurement as read_measurement
 from .pdf_lock import pdfium_lock
 from .schema import Rectangle, RoundHole
 from .shop_sheet import PAGE, draw_profile, fit, num, write
-from .sketch_draft import _printable
+from .sketch_draft import _details, _page, _printable, _wrapped
 from .sketch_verification import disputed_rod_layout
 
-LAYOUT_VERSION = 8
+LAYOUT_VERSION = 9
 
 
 @dataclass(frozen=True)
@@ -39,6 +41,16 @@ class BarPlan:
     plate_width: float
     plate_height: float
     plate_thickness: float | None
+    stock_check: bool
+
+
+@dataclass(frozen=True)
+class BarStock:
+    part: MappedPart
+    source: str
+    width: float
+    thickness: float
+    check: bool
 
 
 def measurement(value, unit):
@@ -60,32 +72,47 @@ def primary_detail(reading, solution):
     ), default=None)
 
 
-def bar_stock(reading):
-    stock = None
-    for part in reading.parts:
-        for mark in part.annotations:
-            if mark.confidence < .85 or mark.kind not in ("width", "thickness", "note"):
-                continue
-            if mark.kind == "note" and mark.targets != ["P"]:
-                continue
-            section = re.match(r"^\s*(.+?)\s*[x×]\s*(.+?)\s+(?:flat\s*)?bar\b", mark.evidence, re.I)
-            if not section:
-                continue
-            try:
-                dimensions = sorted(read_measurement(value, reading.units) for value in section.groups())
-            except ValueError:
-                continue
-            if dimensions[0] <= 0 or (stock and dimensions != stock[2]):
+def _part_bar_stock(part, unit):
+    if not unit:
+        return None
+    readings = []
+    for mark in part.annotations:
+        if mark.kind not in ("width", "thickness", "note") or mark.targets != ["P"]:
+            continue
+        section = re.match(r"^\s*(.+?)\s*[x×]\s*(.+?)\s+(?:flat\s*)?bars?\b", mark.evidence, re.I)
+        if not section:
+            continue
+        try:
+            thickness, width = sorted(read_measurement(value, unit) for value in section.groups())
+        except ValueError:
+            continue
+        if thickness > 0:
+            readings.append((thickness, width, mark))
+    if not readings or len({(t, w) for t, w, _ in readings}) != 1:
+        return None
+    thickness, width, source = max(readings, key=lambda entry: entry[2].confidence)
+    for mark in part.annotations:
+        if mark.kind not in ("width", "thickness") or mark.targets != ["P"]:
+            continue
+        try:
+            if read_measurement(mark.value, unit) != (width if mark.kind == "width" else thickness):
                 return None
-            if stock is None or mark.kind in ("width", "thickness"):
-                stock = part, mark.evidence, dimensions
-    return stock
+        except ValueError:
+            continue
+    strong = {mark.kind for _, _, mark in readings if mark.confidence >= .85}
+    return BarStock(part, source.evidence, width, thickness,
+                    "note" not in strong and not {"width", "thickness"} <= strong)
 
 
-def _one_measure(part, kinds, unit, *, evidence=None):
+def bar_stock(reading):
+    stocks = [stock for part in reading.parts if (stock := _part_bar_stock(part, reading.units))]
+    return stocks[0] if len(stocks) == 1 else None
+
+
+def _one_measure(part, kinds, unit):
     values = set()
     for mark in part.annotations:
-        if mark.kind not in kinds or (evidence and mark.evidence != evidence):
+        if mark.kind not in kinds:
             continue
         if mark.kind == "note" and mark.targets != ["P"]:
             continue
@@ -110,6 +137,23 @@ def _long_axis(member):
     return dx / length, dy / length
 
 
+def _bar_length(stock, unit):
+    # Keep the written length as a reference. A suffix such as "@ approx. 32" is never a release dimension.
+    lengths = set()
+    for mark in stock.part.annotations:
+        if mark.kind not in ("length", "unsupported", "note") or mark.targets != ["P"]:
+            continue
+        suffix = re.search(r"\bbars?\s*(?:@|L\s*[:=])?\s*(?:±|≈|\+/-|approx\.?\s+)?\s*(.+)$",
+                           mark.evidence, re.I)
+        try:
+            value = read_measurement(suffix[1] if suffix else mark.value, unit)
+        except ValueError:
+            continue
+        if value > 0:
+            lengths.add(value)
+    return next(iter(lengths)) if len(lengths) == 1 else None
+
+
 def assembly_top_view(reading, detail, assembly):
     """Support the common pair of flat bars projecting from a rectangular backing plate."""
     stock = bar_stock(reading)
@@ -122,22 +166,13 @@ def assembly_top_view(reading, detail, assembly):
     axes = [_long_axis(member) for member in bars]
     if not all(axes) or abs(sum(a * b for a, b in zip(*axes))) < .97:
         return None
-    part, evidence, dimensions = stock
     unit = reading.units
-    width = _one_measure(part, ("width",), unit, evidence=evidence)
-    thickness = _one_measure(part, ("thickness",), unit, evidence=evidence)
-    if not (width and thickness) and not any(mark.kind in ("width", "thickness") for mark in part.annotations):
-        # A stock-size note identifies the broad and narrow faces without locating the assembly.
-        thickness, width = dimensions
-    if not (width and thickness):
-        return None
     plate, draft = detail
     outline = draft.geometry.part.outline
-    if width * len(bars) > outline.width or thickness > outline.height:
+    if stock.width * len(bars) > outline.width or stock.thickness > outline.height:
         return None
-    length = _one_measure(part, ("length", "unsupported", "note"), unit)
-    return BarPlan(width, thickness, length, pictured_rods(assembly, bars), outline.width,
-                   outline.height, _one_measure(plate, ("thickness",), unit))
+    return BarPlan(stock.width, stock.thickness, _bar_length(stock, unit), pictured_rods(assembly, bars),
+                   outline.width, outline.height, _one_measure(plate, ("thickness",), unit), stock.check)
 
 
 def written_callouts(reading, detail):
@@ -156,7 +191,7 @@ def written_callouts(reading, detail):
             callouts.append(Callout("rod", "THREADED ROD", _printable(note) + qualifier))
             break
     if stock := bar_stock(reading):
-        callouts.append(Callout("bar", "BAR STOCK", _printable(stock[1])))
+        callouts.append(Callout("bar", "BAR STOCK", _printable(stock.source) + (" / Check size" if stock.check else "")))
     if detail:
         part, plan = detail
         bounds = plan.geometry.bounds
@@ -319,7 +354,7 @@ def _notes_panel(c, rows, *, compact):
         y -= 3
 
 
-def _verification_page(c, revision, audit):
+def _verification_page(c, revision, audit, open_parts):
     c.showPage()
     c.setStrokeColor(black)
     c.rect(20, 20, 1184, 752)
@@ -358,6 +393,51 @@ def _verification_page(c, revision, audit):
         prefix = "Approximate drawn clearance" if detail["approximate"] else "Minimum drawn opening-to-edge clearance"
         paragraph(f"{prefix} / {detail['part']} {detail['opening']} / {gap}", bold=True)
         paragraph("Calculated from the plotted geometry. Engineering suitability requires separate verification.")
+    for part, _, _, pins in open_parts:
+        y -= 12
+        paragraph(f"{part.part_id}  /  {part.name}  /  PROFILE STILL OPEN", bold=True)
+        for line, bold in _part_details(part, None, pins, ""):
+            paragraph(line, bold=bold)
+
+
+def _part_details(part, profile, pins, unit):
+    yield from _details(part, profile, pins, unit)
+    open_notes = list(dict.fromkeys(mark.value for mark in part.annotations if mark.kind == "unsupported"))
+    if open_notes:
+        yield "Other written callouts", True
+        yield from ((note, False) for note in open_notes)
+
+
+def _part_sheets(c, reading, revision, entries):
+    unit = reading.units
+    for part, profile, stock, pins in entries:
+        lines = list(_wrapped(_part_details(part, profile, pins, unit), 380))
+        for start in range(0, len(lines), 32):
+            c.showPage()
+            _page(c, part.name, f"{part.part_id}  /  {reading.title}", revision)
+            c.setStrokeColor(black)
+            c.setLineWidth(.65)
+            c.line(780, 78, 780, 660)
+            if start:
+                write(c, 44, 630, "CONTINUED PART DETAILS", 15, True, black)
+            elif stock and not profile:
+                draw_stock_views(c, stock, _bar_length(stock, unit), lambda value: measurement(value, unit))
+            elif profile:
+                write(c, 44, 630, "MEASURED PROFILE", 15, True, black)
+                draw_profile(c, SimpleNamespace(units=unit), profile.geometry,
+                             hole_labels=profile.hole_labels, bend_labels=profile.bend_labels,
+                             viewport=(111, 285, 580, 280), opening_chain=True,
+                             dimension_format=lambda value: measurement(value, unit))
+                if thickness := _one_measure(part, ("thickness",), unit):
+                    _, y_min, _, y_max = profile.geometry.bounds
+                    height = y_max - y_min
+                    _edge_view(c, unit, height, thickness, min(69 / height, 60 / thickness), 143,
+                               tentative=any(pin.code == "tentative_thickness" for pin in pins), x=98)
+            else:
+                write(c, 44, 630, "PROFILE STILL OPEN", 15, True, black)
+                write(c, 44, 605, "Confirm the outline and its dimensions to add a measured view.", 11, color=black)
+            for i, (line, bold) in enumerate(lines[start:start + 32]):
+                write(c, 799, 630 - i * 16.5, line, 10, bold)
 
 
 def make_presentation_sheet(reading, revision, art, solution, detail, callouts, anchors, *, assembly=None, audit=None):
@@ -368,6 +448,15 @@ def make_presentation_sheet(reading, revision, art, solution, detail, callouts, 
     c.setStrokeColor(black)
     c.setLineWidth(1.5)
     plan = assembly_top_view(reading, detail, assembly)
+    drawn = {detail[0].part_id} if detail else set()
+    if plan and (stock := bar_stock(reading)):
+        drawn.add(stock.part.part_id)
+    extra_parts = [
+        (part, profile, _part_bar_stock(part, reading.units),
+         [pin for pin in solution.pins if pin.part_id == part.part_id])
+        for part, profile in zip(reading.parts, solution.draft_plans or [None] * len(reading.parts), strict=True)
+        if part.part_id not in drawn
+    ]
     section_y = 402 if plan else 321
     c.rect(20, 20, 1184, 752)
     c.line(20, section_y, 1204, section_y)
@@ -409,7 +498,11 @@ def make_presentation_sheet(reading, revision, art, solution, detail, callouts, 
     write(c, 1016, 49, "REVIEW COPY", 9.5, True, black)
     write(c, 1016, 30, "DO NOT FABRICATE", 13, True, black)
     if audit:
-        _verification_page(c, revision, audit)
+        open_parts = [entry for entry in extra_parts if entry[1] is None and entry[2] is None]
+        extra_parts = [entry for entry in extra_parts if entry[1] is not None or entry[2] is not None]
+        _verification_page(c, revision, audit, open_parts)
+    if extra_parts:
+        _part_sheets(c, reading, revision, extra_parts)
     c.save()
     return stream.getvalue()
 

@@ -19,6 +19,12 @@ Leave that terminal open and open [the app](http://127.0.0.1:3100). For producti
 
 ## Completed milestones
 
+### Complete illustrated sketch views · November 21, 2026
+
+Illustrated review sheets now retain rectangular bar dimensions when the stock size and a qualified length arrive together in a note. The assembly sheet shows top, side and end views with the written measurements, and marks uncertain stock sizes and lengths for checking. Additional dimensioned parts get their own profiles and available stock-edge views. Unlocated parts keep their written callouts and open details in the review section. The layout update leaves the source, reviewer readings and cut-file release state intact.
+
+Regenerated the latest IMG_0684.jpeg revision on the live Vercel desk. The downloaded PDF keeps the original isometric illustration and adds the two bar profiles, 1-inch by 3-inch stock section, 32-inch reference length and mounting-plate front and edge details. The cropped 1/4-inch plate note remains visible on the review sheet. Verified both rendered pages, the matching PNG, 80 CAD tests, and the isolated live Chrome release flow with corrections, DXF/PDF/CSV downloads and reopening.
+
 ### Invitation to the existing shop desk · November 21, 2026
 
 The Vercel production link can open the workstation's complete quoting and sketch tools through an invitation. The relay keeps files, quotes, and settings in the existing workstation storage and preserves the Supabase learning connection. The workstation, relay, and tunnel must stay online during testing. Deployments without a share configuration continue to show the sample preview.

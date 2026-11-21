@@ -217,14 +217,14 @@ def test_concept_sheet_combines_the_art_with_source_dimensions_and_labels():
         assert art.size == (750, 400)
 
 
-@pytest.mark.parametrize("as_note", [False, True])
-def test_bar_assembly_plan_uses_written_face_width_and_keeps_unlocated_spacing_open(as_note):
+@pytest.mark.parametrize("note_confidence", [None, .97, .75])
+def test_bar_assembly_plan_uses_written_face_width_and_keeps_unlocated_spacing_open(note_confidence):
     data = rectangle()
     base = data["parts"][0]
     base["annotations"].extend([annotation("note", "Mounting plate thickness may increase")])
     bars = deepcopy(base)
     section = '1" x 3" Bar'
-    stock = [annotation("note", section + ' @ ≈ 32"')] if as_note else [
+    stock = [annotation("note", section + ' @ ≈ 32"', score=note_confidence)] if note_confidence is not None else [
         annotation("width", '3"', evidence=section), annotation("thickness", '1"', evidence=section),
     ]
     bars.update(name="Bars in assembly", part_id="BAR", shape="unknown", vertices=[],
@@ -250,6 +250,7 @@ def test_bar_assembly_plan_uses_written_face_width_and_keeps_unlocated_spacing_o
     detail = primary_detail(reading, solution)
     plan = assembly_top_view(reading, detail, assembly)
     assert plan.face_width == 3 and plan.stock_thickness == 1 and plan.written_length == 32
+    assert plan.stock_check is (note_confidence == .75)
     assert sorted(map(len, plan.rods)) == [1, 2]
     picture = io.BytesIO()
     Image.new("RGB", (750, 400), "white").save(picture, "PNG")
@@ -268,8 +269,34 @@ def test_bar_assembly_plan_uses_written_face_width_and_keeps_unlocated_spacing_o
     assert all(face[1] / face[2] == pytest.approx(32 / 3) for face in plan_faces)
     assert side_faces[0][:2] == pytest.approx(plan_faces[0][:2])
     assert side_faces[0][1] / side_faces[0][2] == pytest.approx(32)
+    assert ("Stock size read from sketch. Check." in text) is (note_confidence == .75)
     del assembly.members[-1]
     assert assembly_top_view(reading, detail, assembly) is None
+    fallback = make_presentation_sheet(reading, 3, picture.getvalue(), solution, detail,
+                                       written_callouts(reading, detail), {}, assembly=assembly)
+    first, bar_sheet = [page.extract_text() for page in PdfReader(io.BytesIO(fallback)).pages]
+    assert "MOUNTING PLATE DETAIL" in first and all(text in bar_sheet for text in (
+        "BAR STOCK / REVIEW VIEWS", "TOP VIEW", "SIDE VIEW", "END VIEW", '32" REF',
+    ))
+
+
+def test_additional_part_profiles_and_incomplete_parts_appear_on_the_illustrated_pdf():
+    data = rectangle()
+    other = rectangle()["parts"][0]
+    other.update(part_id="PL2", name="Spacer plate", annotations=[annotation("width", "6"), annotation("height", "4")])
+    cropped = deepcopy(other)
+    cropped.update(part_id="PL3", name="Cropped gusset", shape="unknown", vertices=[],
+                   annotations=[annotation("thickness", '1/4"', score=.72)])
+    data["parts"] += [other, cropped]
+    reading = SketchMap.model_validate(data)
+    solution = solve(reading, draft=True)
+    detail = primary_detail(reading, solution)
+    picture = io.BytesIO()
+    Image.new("RGB", (400, 300), "white").save(picture, "PNG")
+    pdf = make_presentation_sheet(reading, 3, picture.getvalue(), solution, detail, written_callouts(reading, detail), {})
+    _, spacer, gusset = [page.extract_text() for page in PdfReader(io.BytesIO(pdf)).pages]
+    assert '6"' in spacer and '4"' in spacer and "MEASURED PROFILE" in spacer
+    assert '1/4"' in gusset and "PROFILE STILL OPEN" in gusset
 
 
 def test_sketch_check_keeps_visual_findings_separate_from_the_measured_plate():
