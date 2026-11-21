@@ -1,0 +1,130 @@
+name: lmm-engineering
+x-api: &api
+  image: lmm-nfip-api:phase4
+  pull_policy: never
+  security_opt: ["no-new-privileges:true"]
+  cap_drop: [ALL]
+  read_only: true
+  tmpfs: ["/tmp:size=64m,mode=1777"]
+x-db: &db
+  NFIP_DB_HOST: postgres
+  NFIP_DB_NAME: fabrication
+  NFIP_DB_USER: nfip_runtime
+  NFIP_DB_PASSWORD: "${NFIP_DB_PASSWORD:?Run infra/setup.ps1}"
+x-s3: &s3
+  NFIP_S3_ENDPOINT: minio:9000
+  NFIP_BUCKET: engineering-records
+  NFIP_S3_USER: nfip-files
+  NFIP_S3_PASSWORD: "${NFIP_S3_PASSWORD:?Run infra/setup.ps1}"
+x-redis: &redis
+  NFIP_REDIS_HOST: redis
+  NFIP_REDIS_PASSWORD: "${NFIP_REDIS_PASSWORD:?Run infra/setup.ps1}"
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.2-pg16-bookworm@sha256:00ba258a66dac104fd5171074a0084462a64a1369d8513f3d0a634e2f24d15bc
+    environment:
+      POSTGRES_DB: fabrication
+      POSTGRES_USER: nfip_owner
+      POSTGRES_PASSWORD: "${NFIP_DB_OWNER_PASSWORD:?Run infra/setup.ps1}"
+      NFIP_RUNTIME_PASSWORD: "${NFIP_DB_PASSWORD:?Run infra/setup.ps1}"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./infra/init-postgres.sh:/docker-entrypoint-initdb.d/01-runtime.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nfip_owner -d fabrication"]
+      interval: 5s
+      timeout: 4s
+      retries: 20
+    restart: unless-stopped
+  redis:
+    image: redis:7.4-alpine@sha256:7f7d30b7fdd09467bac58198a1f166dd69789d348d4fe859cccb20e0cf287fbe
+    environment:
+      REDISCLI_AUTH: "${NFIP_REDIS_PASSWORD:?Run infra/setup.ps1}"
+    command: ["sh", "-ec", "exec redis-server --appendonly yes --requirepass \"$$REDISCLI_AUTH\""]
+    volumes: [redis:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 4s
+      retries: 20
+    restart: unless-stopped
+  minio:
+    image: lmm-nfip-minio:2025-10-15
+    build: ./infra/minio
+    environment:
+      MINIO_ROOT_USER: nfip-admin
+      MINIO_ROOT_PASSWORD: "${NFIP_S3_OWNER_PASSWORD:?Run infra/setup.ps1}"
+    volumes: [objects:/data]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:9000/minio/health/ready"]
+      interval: 5s
+      timeout: 4s
+      retries: 30
+    restart: unless-stopped
+  storage-init:
+    <<: *api
+    environment:
+      <<: *s3
+      MINIO_ROOT_USER: nfip-admin
+      MINIO_ROOT_PASSWORD: "${NFIP_S3_OWNER_PASSWORD:?Run infra/setup.ps1}"
+    command: ["python", "-m", "fabrication.bootstrap_storage"]
+    depends_on:
+      minio: {condition: service_healthy}
+    restart: "no"
+  migrate:
+    <<: *api
+    environment:
+      NFIP_DB_USER: nfip_owner
+      NFIP_DB_PASSWORD: "${NFIP_DB_OWNER_PASSWORD:?Run infra/setup.ps1}"
+    command: ["python", "-m", "fabrication.migrate"]
+    depends_on:
+      postgres: {condition: service_healthy}
+    restart: "no"
+  api:
+    <<: *api
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      <<: [*db, *s3, *redis]
+      NFIP_API_TOKEN: "${NFIP_API_TOKEN:?Run infra/setup.ps1}"
+      VISION_PROVIDER: "${VISION_PROVIDER:-openai}"
+      VISION_MODEL: "${VISION_MODEL:-gpt-6.1-terra}"
+      SKETCH_ASSEMBLY_MODEL: "${SKETCH_ASSEMBLY_MODEL:-}"
+    ports:
+      - "127.0.0.1:${NFIP_API_PORT:-8140}:8140"
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      storage-init: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8140/health/ready',timeout=4)"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+  worker:
+    <<: *api
+    environment:
+      <<: [*db, *s3, *redis]
+      VISION_PROVIDER: "${VISION_PROVIDER:-openai}"
+      OPENBLAS_NUM_THREADS: "1"
+      VISION_MODEL: "${VISION_MODEL:-gpt-6.1-terra}"
+      BLUEPRINT_AUDIT_MODEL: "${BLUEPRINT_AUDIT_MODEL:-}"
+      SKETCH_ASSEMBLY_MODEL: "${SKETCH_ASSEMBLY_MODEL:-}"
+      SKETCH_VISUAL_MODEL: "${SKETCH_VISUAL_MODEL:-gpt-image-2.6-sunburst}"
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+      VISION_BASE_URL: "${VISION_BASE_URL:-}"
+      VISION_API_KEY: "${VISION_API_KEY:-}"
+      NFIP_EMBEDDING_PROVIDER: "${NFIP_EMBEDDING_PROVIDER:-local}"
+    command: ["celery", "-A", "fabrication.tasks:worker", "worker", "-l", "WARNING", "--concurrency=2", "--pidfile=/tmp/celery.pid"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      storage-init: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    restart: unless-stopped
+volumes:
+  postgres:
+  redis:
+  objects:
+

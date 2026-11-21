@@ -1,0 +1,16 @@
+**
+!apps/
+!apps/api/
+!apps/api/**
+!packages/
+!packages/cad/
+!packages/cad/**
+!packages/costing/
+!packages/costing/**
+!packages/ai/
+!packages/ai/**
+!requirements-engineering.txt
+**/__pycache__/
+**/*.pyc
+**/.env*
+**/.venv/

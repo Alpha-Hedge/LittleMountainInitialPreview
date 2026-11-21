@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "title": "Slotted mounting bracket",
+  "revision": "A",
+  "units": "mm",
+  "parts": [
+    {
+      "part_id": "MB-014",
+      "name": "Mounting bracket blank",
+      "quantity": 3,
+      "material": "304 stainless steel",
+      "thickness": 6.0,
+      "density_kg_m3": 8000,
+      "outline": {"kind": "rectangle", "width": 120, "height": 80, "corner_radius": 4},
+      "holes": [
+        {"shape": "round", "center": {"x": 22, "y": 40}, "diameter": 10},
+        {"shape": "slot", "center": {"x": 69, "y": 40}, "length": 36, "width": 10, "angle": 0}
+      ],
+      "bends": [
+        {"label": "Return flange", "start": {"x": 0, "y": 15}, "end": {"x": 120, "y": 15}, "direction": "up", "angle": 90}
+      ],
+      "dimensions": [
+        {"label": "Hole to slot center", "start": {"x": 22, "y": 40}, "end": {"x": 69, "y": 40},
+         "axis": "horizontal", "value": 47, "tolerance_plus": 0.2, "tolerance_minus": 0.2}
+      ],
+      "notes": "Deburr cut edges. Scribe the bend line before forming."
+    }
+  ]
+}

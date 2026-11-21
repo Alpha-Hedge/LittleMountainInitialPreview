@@ -1,0 +1,376 @@
+{
+  "effectiveOn": "2026-11-20",
+  "references": [
+    {
+      "name": "BLS · U.S. welder wages",
+      "url": "https://www.bls.gov/ooh/production/welders-cutters-solderers-and-brazers.htm"
+    },
+    {
+      "name": "BLS · Metal fabrication wages by trade",
+      "url": "https://www.bls.gov/IAG/TGS/iag332.htm"
+    },
+    {
+      "name": "Online Metals · U.S. retail sheet and plate listings",
+      "url": "https://www.onlinemetals.com/en/buy/sheet-plate"
+    }
+  ],
+  "stock": [
+    [
+      "A36",
+      "carbon steel",
+      "sheet / plate",
+      0.283,
+      2.55
+    ],
+    [
+      "A36",
+      "carbon steel",
+      "bar",
+      0.283,
+      2.6
+    ],
+    [
+      "A36",
+      "carbon steel",
+      "angle / channel / beam",
+      0.283,
+      2.35
+    ],
+    [
+      "A1011",
+      "carbon steel",
+      "sheet / plate",
+      0.283,
+      2.75
+    ],
+    [
+      "A1008",
+      "carbon steel",
+      "sheet / plate",
+      0.283,
+      3.25
+    ],
+    [
+      "A572 Gr 50",
+      "carbon steel",
+      "sheet / plate",
+      0.283,
+      3.05
+    ],
+    [
+      "A572 Gr 50",
+      "carbon steel",
+      "angle / channel / beam",
+      0.283,
+      2.7
+    ],
+    [
+      "A992",
+      "carbon steel",
+      "angle / channel / beam",
+      0.283,
+      2.55
+    ],
+    [
+      "A500 Gr B",
+      "carbon steel",
+      "tube / pipe",
+      0.283,
+      2.9
+    ],
+    [
+      "A500 Gr C",
+      "carbon steel",
+      "tube / pipe",
+      0.283,
+      3.15
+    ],
+    [
+      "A53 Gr B",
+      "carbon steel",
+      "tube / pipe",
+      0.283,
+      3.05
+    ],
+    [
+      "A513",
+      "carbon steel",
+      "tube / pipe",
+      0.283,
+      3.6
+    ],
+    [
+      "A653 G90",
+      "galvanized steel",
+      "sheet / plate",
+      0.283,
+      4.15
+    ],
+    [
+      "A588",
+      "weathering steel",
+      "sheet / plate",
+      0.283,
+      4.7
+    ],
+    [
+      "AR400",
+      "abrasion resistant steel",
+      "sheet / plate",
+      0.283,
+      5.4
+    ],
+    [
+      "1018",
+      "carbon steel",
+      "bar",
+      0.284,
+      3.75
+    ],
+    [
+      "1045",
+      "carbon steel",
+      "bar",
+      0.284,
+      4.9
+    ],
+    [
+      "4140",
+      "alloy steel",
+      "bar",
+      0.284,
+      6.35
+    ],
+    [
+      "4140",
+      "alloy steel",
+      "sheet / plate",
+      0.284,
+      7.75
+    ],
+    [
+      "304",
+      "stainless steel",
+      "sheet / plate",
+      0.287,
+      8.25
+    ],
+    [
+      "304",
+      "stainless steel",
+      "tube / pipe",
+      0.287,
+      9.4
+    ],
+    [
+      "304",
+      "stainless steel",
+      "bar",
+      0.287,
+      8.9
+    ],
+    [
+      "304",
+      "stainless steel",
+      "angle / channel / beam",
+      0.287,
+      10.1
+    ],
+    [
+      "304L",
+      "stainless steel",
+      "sheet / plate",
+      0.287,
+      8.6
+    ],
+    [
+      "304L",
+      "stainless steel",
+      "tube / pipe",
+      0.287,
+      10.2
+    ],
+    [
+      "316",
+      "stainless steel",
+      "sheet / plate",
+      0.289,
+      10.7
+    ],
+    [
+      "316",
+      "stainless steel",
+      "bar",
+      0.289,
+      12.2
+    ],
+    [
+      "316L",
+      "stainless steel",
+      "sheet / plate",
+      0.289,
+      11.25
+    ],
+    [
+      "316L",
+      "stainless steel",
+      "tube / pipe",
+      0.289,
+      12.35
+    ],
+    [
+      "430",
+      "stainless steel",
+      "sheet / plate",
+      0.278,
+      6.85
+    ],
+    [
+      "17-4 PH",
+      "stainless steel",
+      "bar",
+      0.28,
+      15.9
+    ],
+    [
+      "5052-H32",
+      "aluminum",
+      "sheet / plate",
+      0.097,
+      6.5
+    ],
+    [
+      "6061-T6",
+      "aluminum",
+      "sheet / plate",
+      0.098,
+      7.1
+    ],
+    [
+      "6061-T6",
+      "aluminum",
+      "bar",
+      0.098,
+      7.35
+    ],
+    [
+      "6061-T6",
+      "aluminum",
+      "tube / pipe",
+      0.098,
+      8.25
+    ],
+    [
+      "6061-T6",
+      "aluminum",
+      "angle / channel / beam",
+      0.098,
+      8.75
+    ],
+    [
+      "6061-T651",
+      "aluminum",
+      "sheet / plate",
+      0.098,
+      7.65
+    ],
+    [
+      "6063-T52",
+      "aluminum",
+      "tube / pipe",
+      0.097,
+      7.85
+    ],
+    [
+      "6063-T52",
+      "aluminum",
+      "angle / channel / beam",
+      0.097,
+      8.15
+    ],
+    [
+      "3003-H14",
+      "aluminum",
+      "sheet / plate",
+      0.099,
+      7.25
+    ],
+    [
+      "5083-H116",
+      "aluminum",
+      "sheet / plate",
+      0.096,
+      9.35
+    ],
+    [
+      "7075-T651",
+      "aluminum",
+      "sheet / plate",
+      0.102,
+      12.85
+    ],
+    [
+      "7075-T651",
+      "aluminum",
+      "bar",
+      0.102,
+      14.2
+    ],
+    [
+      "C110",
+      "copper",
+      "sheet / plate",
+      0.323,
+      18.4
+    ],
+    [
+      "C110",
+      "copper",
+      "bar",
+      0.323,
+      16.95
+    ],
+    [
+      "C260",
+      "brass",
+      "sheet / plate",
+      0.308,
+      16.8
+    ],
+    [
+      "C360",
+      "brass",
+      "bar",
+      0.307,
+      14.85
+    ],
+    [
+      "C932",
+      "bronze",
+      "bar",
+      0.322,
+      20.6
+    ],
+    [
+      "Grade 2",
+      "titanium",
+      "sheet / plate",
+      0.163,
+      41.5
+    ],
+    [
+      "Grade 5",
+      "titanium",
+      "sheet / plate",
+      0.16,
+      62.75
+    ],
+    [
+      "Grade 5",
+      "titanium",
+      "bar",
+      0.16,
+      58.0
+    ]
+  ]
+}

@@ -1,0 +1,73 @@
+BENCH BRACKET PRACTICE QUOTE
+
+1. START
+Double-click "Open practice quote.cmd" in this folder, or open
+http://127.0.0.1:3150/quotes/new on this computer.
+The practice desk saves separately from the shop desk.
+
+In the drawing box, choose WB-014-Rev-A.pdf. In the Windows file
+picker you can paste the full filename:
+C:\Quoting tool\output\pdf\WB-014-Rev-A.pdf
+
+Customer notes (copy this whole paragraph)
+Please quote 10 welded bench brackets to drawing WB-014 Rev A. Please include local delivery as a separate line. We can receive them two weeks after approval. Thanks, Jamie.
+
+Click "Read drawing & start quote". The app starts reading as soon as
+the drawing opens. You can add the customer name on the final review.
+
+2. CHECK JOB DETAILS
+Compare the result to page 1 and the customer notes. Correct any missing or
+incorrect details before applying them. Quote one finished bracket as a single
+item. The base and upright are components of that item.
+
+Description: Welded bench bracket
+Order quantity: 10 finished brackets (customer notes)
+Material: A36 steel plate
+Thickness: 0.25 in
+Overall size: 6.00 in long x 4.00 in wide x 3.25 in high
+Finish: Bare steel. Deburr all edges.
+Revision: A
+Other requirements: Two 0.50 in through holes. Hole centers are 1.00 in
+from the front edge and 1.00 in from the nearest end. Center the upright
+front to back. A 1/8 in fillet weld runs the full length on both sides.
+
+Check the quantity and the weld note on every run. The customer's email
+orders 10 brackets. The two holes belong to each bracket. Under Other
+requirements, check the drawing for the full-length weld on both sides.
+
+Click "Save details & price the job". The bracket fills the first item.
+
+3. PRICE THE PRACTICE JOB
+Click "Back to quote" to enter the manual practice costs below and
+compare your result to the answer key. The built-in job types use their
+own practice rates and time allowances, so their totals can differ.
+
+Item 1: Welded bench bracket. Quantity 10.
+  Add a cost > Material. Amount 1 set, rate $8.00, For each piece.
+  Add a cost > Labor. Amount 1.5 hours, rate $60.00 per hour,
+  Once for all pieces in this item. This is 90 minutes for the entire batch.
+  Expected bracket cost: $170.00 ($80.00 material + $90.00 labor).
+
+Click "Add another item".
+Item 2: Local delivery. Quantity 1.
+  Add a cost > Other cost. Amount 1 trip, rate $30.00,
+  Once for all pieces in this item.
+  Expected delivery cost: $30.00.
+
+In "Change profit margin", enter 25.
+Expected shop cost: $200.00.
+Expected customer price before tax: $266.67.
+
+4. CHECK THE CUSTOMER COPY
+Click "Save & review quote" (or "Review quote" if already saved).
+Customer name: Pine Hollow Workshop (practice).
+Work included: Make 10 welded bench brackets to WB-014 Rev A, bare steel
+with edges deburred. Local delivery included as a separate item.
+When can the work be ready? Two weeks after approval.
+Payment and other terms: Payment due on delivery.
+Customer can accept until: Use the suggested date, 30 days from today.
+Resolve any open questions from the drawing using the answer key above.
+Check "I checked the work included and the timing".
+Click "Continue to approval", then "Approve and create PDF".
+Click "Open customer PDF". Check that it shows 10 brackets, one delivery,
+priced at $226.67 for the brackets and $40.00 for delivery. The total is $266.67 before tax.

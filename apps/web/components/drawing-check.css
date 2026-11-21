@@ -1,0 +1,153 @@
+.review-back,
+.review-source-anchor,
+.drawing-check .review-footer a:not(.button) {
+  color: var(--green);
+  font-weight: 650;
+  text-underline-offset: 3px;
+}
+.review-source-anchor {
+  display: none;
+  margin-left: auto;
+}
+.review-next {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: clamp(16px, 2.5vw, 24px);
+  margin-bottom: 16px;
+  border: 1px solid #d2ddd0;
+  border-radius: 12px;
+  background: #edf3e9;
+}
+.review-next h2 {
+  margin: 0;
+  color: var(--green);
+  font-size: clamp(21px, 3vw, 26px);
+  line-height: 1.15;
+}
+.review-next p {
+  margin: 7px 0 0;
+  color: #435248;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.review-next .button {
+  min-height: 48px;
+  flex-shrink: 0;
+  white-space: normal;
+  text-align: center;
+}
+.review-layout {
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+}
+.review-layout > .source-panel:only-child {
+  grid-column: 1 / -1;
+}
+.drawing-check .review-part {
+  gap: 18px;
+}
+.drawing-check .part-header {
+  align-items: center;
+  justify-content: space-between;
+}
+.drawing-check .part-header h3 {
+  margin: 0;
+  color: var(--green);
+  font: 600 21px var(--display);
+  overflow-wrap: anywhere;
+}
+.review-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.review-field-wide {
+  grid-column: 1 / -1;
+}
+.review-field input[aria-invalid="true"],
+.review-field textarea[aria-invalid="true"] {
+  background: #fff9ef;
+  border: 2px solid #a96c22;
+}
+.drawing-check .review-item-map {
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+}
+.drawing-check .review-item-map[open] summary {
+  margin-bottom: 5px;
+}
+.drawing-check .run-select summary,
+.drawing-check .review-item-map summary,
+.drawing-citation summary {
+  cursor: pointer;
+  color: var(--green);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 0;
+  min-height: 38px;
+}
+.drawing-check .run-select[open] summary {
+  margin-bottom: 8px;
+}
+.drawing-check .run-select .button {
+  margin-top: 8px;
+}
+.drawing-check .field {
+  font-size: 14px;
+}
+.drawing-check .field :is(select, input, textarea),
+.drawing-check .button {
+  min-height: 44px;
+  height: auto;
+  font-size: 16px;
+}
+.drawing-check .part-header label {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 7px;
+}
+.drawing-check .part-header input[type="checkbox"] {
+  width: 19px;
+  height: 19px;
+}
+.drawing-check .field-status {
+  font-size: 12px;
+}
+.drawing-check .evidence button {
+  min-height: 36px;
+  white-space: nowrap;
+}
+.drawing-check .evidence {
+  font-size: 14px;
+  line-height: 1.5;
+  flex-wrap: wrap;
+}
+@media (max-width: 1100px) {
+  .review-source-anchor {
+    display: inline-block;
+  }
+  .review-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .review-layout .source-panel {
+    position: static;
+  }
+}
+@media (max-width: 650px) {
+  .review-next {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .drawing-check .review-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+@media (max-width: 500px) {
+  .review-fields-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "snapshot_name": "DEMO – training stock and shop rates",
+  "demo": true,
+  "gross_margin_pct": "25",
+  "materials": [{
+    "spec_code": "DEMO-A36-025", "material_family": "carbon steel", "material_grade": "A36",
+    "thickness_in": "0.25", "density_lb_per_in3": "0.283", "cost_per_lb": "0.86",
+    "k_factor": "0.42", "supplier": "Demo supplier", "effective_on": "2026-01-01",
+    "sheet_width_in": "96", "sheet_height_in": "48", "margin_in": "0.25",
+    "spacing_in": "0.125", "allow_rotate": true
+  }],
+  "cut": {
+    "center": {"name": "Demo plasma", "effective_on": "2026-01-01", "includes": "Loaded labor and plasma machine per hour", "hourly_rate": "85", "setup_minutes": "15"},
+    "kerf_in": "0.06", "speed_in_min": "60", "seconds_per_pierce": "2"
+  },
+  "brake": {
+    "center": {"name": "Demo press brake", "effective_on": "2026-01-01", "includes": "Loaded operator and press per hour", "hourly_rate": "80", "setup_minutes": "12"},
+    "seconds_per_bend": "18"
+  },
+  "welds": [{
+    "process": "GMAW", "material_family": "carbon steel",
+    "center": {"name": "Demo MIG bay", "effective_on": "2026-01-01", "includes": "Loaded welder and bay per hour; filler and gas priced separately", "hourly_rate": "70", "setup_minutes": "10"},
+    "filler_density_lb_per_in3": "0.283", "deposit_lb_per_arc_hour": "4",
+    "deposition_efficiency": "0.9", "arc_on_fraction": "0.4",
+    "position_factors": {"1F":"1", "2F":"0.95", "3F":"0.65", "4F":"0.6", "1G":"1", "2G":"0.9", "3G":"0.65", "4G":"0.6"},
+    "filler_usd_per_lb": "2", "gas_flow_scfh": "30", "gas_seconds_per_start": "3", "gas_usd_per_scf": "0.08"
+  }]
+}

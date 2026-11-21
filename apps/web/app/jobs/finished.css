@@ -1,0 +1,212 @@
+.job-book {
+  display: grid;
+  gap: 16px;
+}
+.job-book .page-heading {
+  margin-bottom: 4px;
+}
+.finish-body,
+.finish-stack {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.finish-body {
+  padding: 20px;
+  line-height: 1.5;
+  font-size: 15px;
+}
+.finish-body p,
+.finish-body h3,
+.finish-entry h3 {
+  margin: 0;
+}
+.finish-body h3,
+.job-book .panel-heading h2 {
+  font: 600 23px var(--display);
+  letter-spacing: 0;
+}
+.finish-body > a.button,
+.finish-body > button {
+  justify-self: start;
+}
+.finish-stack {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.finish-inputs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.finish-wide {
+  grid-column: 1/-1;
+}
+.finish-entry {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  background: var(--surface-subtle);
+  display: grid;
+  gap: 12px;
+}
+.finish-entry-head,
+.finish-buttons,
+.finish-list a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.finish-entry-head h3 {
+  font: 600 20px var(--display);
+}
+.finish-remove {
+  font: inherit;
+  color: #80503c;
+  border: 0;
+  background: transparent;
+  border-radius: 5px;
+  padding: 8px 6px;
+  min-height: 44px;
+}
+.finish-buttons {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+.finish-fold > summary {
+  font-size: 15px;
+  font-weight: 650;
+  color: var(--green);
+  min-height: 46px;
+  padding: 12px 0;
+  cursor: pointer;
+}
+.panel.finish-fold > summary {
+  padding: 14px 18px;
+}
+.finish-entry > .finish-fold,
+.finish-body > .finish-fold {
+  border-top: 1px solid var(--line);
+}
+.job-book .field {
+  font-size: 15px;
+  font-weight: 600;
+}
+.job-book .field input,
+.job-book .field select,
+.job-book .field textarea {
+  font: 400 16px var(--sans);
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  min-height: 45px;
+  padding: 10px 11px;
+  border: 1px solid var(--outline);
+  border-radius: 10px;
+  background: white;
+}
+.job-book .button {
+  min-height: 45px;
+  height: auto;
+  font-size: 15px;
+  white-space: normal;
+}
+.job-book small {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 400;
+}
+.finish-date {
+  max-width: 260px;
+}
+.finish-list a {
+  padding: 16px 20px;
+  border-top: 1px solid var(--line);
+  text-decoration: none;
+}
+.finish-list a:hover {
+  background: var(--wash);
+}
+.finish-list a > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.finish-list a > div + div {
+  text-align: right;
+}
+.finish-list a b,
+.finish-body a:not(.button),
+.finish-notice a {
+  color: var(--green);
+  font-weight: 650;
+}
+.finish-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 15px;
+  padding: 4px 18px 16px;
+  margin: 0;
+}
+.finish-summary dd {
+  font-weight: 700;
+  font-size: 18px;
+  margin: 3px 0 0;
+}
+.finish-summary dt {
+  color: var(--muted);
+  font-size: 14px;
+}
+.finish-notice,
+.finish-error {
+  padding: 13px 16px;
+  border-radius: 7px;
+  background: #eaf3e8;
+  margin: 0;
+}
+.finish-error {
+  background: #fbeae3;
+  color: #863d25;
+}
+.finish-preview {
+  padding: 0;
+  list-style: none;
+  margin: 0;
+}
+.finish-preview li {
+  display: grid;
+  gap: 4px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+}
+.finish-preview span {
+  color: var(--muted);
+}
+@media (max-width: 580px) {
+  .finish-list a {
+    align-items: start;
+    flex-direction: column;
+  }
+  .finish-list a > div + div {
+    text-align: left;
+  }
+  .finish-body {
+    padding: 15px;
+  }
+  .finish-entry {
+    padding: 12px;
+  }
+  .finish-inputs {
+    grid-template-columns: 1fr;
+  }
+  .finish-date {
+    max-width: none;
+  }
+  .job-book .finish-buttons > .button {
+    width: 100%;
+  }
+}

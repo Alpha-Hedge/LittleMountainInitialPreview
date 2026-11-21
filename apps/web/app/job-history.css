@@ -1,0 +1,172 @@
+.jh-fieldset {
+  display: grid;
+  gap: 16px;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.jh-body {
+  padding: 18px 20px;
+  font-size: 13px;
+}
+.jh-body h3 {
+  font: 600 21px var(--display);
+  margin: 0 0 8px;
+}
+.jh-body p {
+  line-height: 1.5;
+}
+.jh-body summary {
+  cursor: pointer;
+  font-weight: 650;
+}
+.jh-stack {
+  display: grid;
+  gap: 12px;
+}
+.jh-csv-preview {
+  margin: 15px 0 0;
+}
+.jh-csv-preview ul {
+  margin: 8px 0 14px;
+  padding: 0;
+  list-style: none;
+  max-height: 280px;
+  overflow: auto;
+  border-block: 1px solid var(--line);
+}
+.jh-csv-preview li {
+  display: grid;
+  gap: 3px;
+  padding: 8px;
+  overflow-wrap: anywhere;
+}
+.jh-csv-preview li + li {
+  border-top: 1px solid var(--line);
+}
+.jh-csv-preview li span {
+  color: var(--muted);
+  font-size: 12px;
+}
+.jh-fields {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+  align-items: start;
+}
+.jh-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0;
+}
+.jh-body .field select,
+.jh-fields .field select,
+.jh-fieldset .field select {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: white;
+  padding: 8px;
+  font: inherit;
+}
+.jh-actual-row {
+  display: grid;
+  align-items: end;
+  grid-template-columns:
+    minmax(90px, 1.3fr) minmax(85px, 0.85fr) minmax(100px, 1.4fr) minmax(70px, 0.65fr)
+    minmax(65px, 0.5fr) minmax(80px, 0.7fr) 28px;
+  gap: 9px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 13px;
+}
+.jh-muted,
+.jh-body small {
+  font-size: 12px;
+  color: var(--muted);
+}
+.jh-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+.jh-metrics > div {
+  flex: 1;
+  min-width: 150px;
+  padding: 14px 20px;
+}
+.jh-metrics small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+.jh-metrics strong {
+  font: 600 24px var(--display);
+}
+.jh-card {
+  border-top: 1px solid var(--line);
+  padding: 16px 20px;
+}
+.jh-card h3 {
+  margin: 0 0 5px;
+  font: 600 19px var(--display);
+}
+.jh-card a,
+.jh-body a {
+  color: var(--green);
+  font-weight: 600;
+}
+.jh-history-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(265px, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+.jh-history-layout > .jh-stack {
+  min-width: 0;
+}
+@media (max-width: 1040px) {
+  .jh-actual-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .jh-history-layout {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .jh-actual-row,
+  .jh-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .jh-metrics > div {
+    min-width: 110px;
+    padding: 12px;
+  }
+  .jh-body {
+    padding: 14px;
+  }
+  .jh-fields textarea {
+    min-width: 0;
+  }
+}
+.jh-observed {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border-left: 3px solid var(--green);
+  background: var(--wash);
+}
+.jh-observed p {
+  margin: 5px 0;
+}
+.jh-observation-refs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 12px;
+}

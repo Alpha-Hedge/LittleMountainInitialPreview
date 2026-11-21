@@ -1,0 +1,11 @@
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@source "../components";
+@source "./**/*.tsx";
+
+@theme {
+  --color-control: #0963cf;
+  --color-control-foreground: #ffffff;
+  --color-border: #c6d5e4;
+}

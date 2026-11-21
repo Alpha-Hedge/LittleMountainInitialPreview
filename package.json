@@ -1,0 +1,29 @@
+{
+  "name": "little-mountain-platform",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @lmm/web dev",
+    "build": "pnpm --filter @lmm/web build",
+    "start": "pnpm --filter @lmm/web start",
+    "typecheck": "pnpm --filter @lmm/web typecheck",
+    "sync-history": "node --env-file-if-exists=.env.local scripts/sync-learning.mjs",
+    "vision": "wsl.exe -d Ubuntu-24.04 -- bash scripts/start-vision.sh"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.80",
+    "pdfjs-dist": "^5.4.530",
+    "sharp": "0.35.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "typescript": "~5.9.3",
+    "postal-mime": "^4.2.1",
+    "pdfkit": "^0.20.2",
+    "pg": "8.23.1"
+  }
+}
