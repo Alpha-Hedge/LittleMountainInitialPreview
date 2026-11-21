@@ -3,6 +3,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const cookieName = "__Host-lmm-desk";
 const invitePath = "/desk-access";
+const weekSeconds = 7 * 24 * 60 * 60;
 const idlePageHeaders = {
   "Cache-Control": "private, no-store",
   "Referrer-Policy": "no-referrer",
@@ -41,6 +42,11 @@ function equalHex(expected: string, provided: string | null | undefined) {
   return Boolean(provided && /^[a-f0-9]{64}$/.test(provided) && timingSafeEqual(Buffer.from(expected, "hex"), Buffer.from(provided, "hex")));
 }
 
+function setSession(response: NextResponse, session: string) {
+  response.cookies.set(cookieName, session, { httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: weekSeconds });
+  return response;
+}
+
 export function shareWorkstation(request: NextRequest): NextResponse | null {
   const endpoint = process.env.LMM_SHARE_ENDPOINT;
   const publicOrigin = process.env.LMM_SHARE_PUBLIC_ORIGIN;
@@ -57,15 +63,23 @@ export function shareWorkstation(request: NextRequest): NextResponse | null {
   const { pathname, search } = request.nextUrl;
   const session = createHmac("sha256", originKey).update(inviteHash).digest("hex");
   if (pathname === invitePath) {
-    if (request.method === "GET") return accessPage(true);
+    if (request.method === "GET") {
+      const expires = request.nextUrl.searchParams.get("expires");
+      const signature = request.nextUrl.searchParams.get("signature");
+      if (expires === null && signature === null) return accessPage(true);
+      const now = Math.floor(Date.now() / 1000);
+      const deadline = Number(expires);
+      const validDeadline = expires !== null && /^\d{10}$/.test(expires) && deadline >= now && deadline <= now + weekSeconds;
+      const expected = createHmac("sha256", originKey).update(`lmm-desk-link:${inviteHash}:${expires}`).digest("hex");
+      if (!validDeadline || !equalHex(expected, signature)) return accessPage(false);
+      return setSession(NextResponse.redirect(new URL("/", publicOrigin), { status: 303, headers: idlePageHeaders }), session);
+    }
     const invitation = request.headers.get("X-LMM-Invitation");
     if (request.method !== "POST" || request.headers.get("Origin") !== publicOrigin || !invitation ||
         !/^[a-f0-9]{64}$/.test(invitation) || !equalHex(inviteHash, createHash("sha256").update(invitation).digest("hex"))) {
       return new NextResponse(null, { status: 403, headers: idlePageHeaders });
     }
-    const response = new NextResponse(null, { status: 204, headers: idlePageHeaders });
-    response.cookies.set(cookieName, session, { httpOnly: true, secure: true, sameSite: "strict", path: "/", maxAge: 7 * 24 * 60 * 60 });
-    return response;
+    return setSession(new NextResponse(null, { status: 204, headers: idlePageHeaders }), session);
   }
 
   if (!equalHex(session, request.cookies.get(cookieName)?.value)) {

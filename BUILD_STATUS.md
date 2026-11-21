@@ -27,6 +27,8 @@ The engineering readiness check passed. The tunnel returned 403 without the priv
 
 Chrome verified the production invitation, both upload forms, and the existing desk pages. The fixture PDF produced two parts and a saved draft that opened through Vercel and the workstation at a $984.92 preliminary price. The sketch retained the original JPEG bytes and generated an illustrated PDF that downloaded and reopened. The test records are labeled in the existing desk. Gmail connection still needs the owner's account setup.
 
+Signed invitations can also set the browser session through a server redirect. The signed link expires after seven days and works in browser views that omit URL fragments. The public address still requires a valid invitation before loading shop records.
+
 ### Hosted preview without workstation storage · November 21, 2026
 
 Vercel production and preview now serve a read-only sample quote and the Quick Guide. Hosted requests that need live workspace data show a preview page or return a clear API message. The workstation still opens its local SQLite workspace for editing and saving. Persistent hosted quote storage remains a separate setup step.
