@@ -19,6 +19,12 @@ Leave that terminal open and open [the app](http://127.0.0.1:3100). For producti
 
 ## Completed milestones
 
+### Invitation to the existing shop desk · November 21, 2026
+
+The Vercel production link can open the workstation's complete quoting and sketch tools through an invitation. The relay keeps files, quotes, and settings in the existing workstation storage and preserves the Supabase learning connection. The workstation, relay, and tunnel must stay online during testing. Deployments without a share configuration continue to show the sample preview.
+
+The engineering readiness check passed. The tunnel returned 403 without the private origin credential and opened the workstation with it. The Next.js production build and TypeScript check passed.
+
 ### Hosted preview without workstation storage · November 21, 2026
 
 Vercel production and preview now serve a read-only sample quote and the Quick Guide. Hosted requests that need live workspace data show a preview page or return a clear API message. The workstation still opens its local SQLite workspace for editing and saving. Persistent hosted quote storage remains a separate setup step.
