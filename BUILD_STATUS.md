@@ -23,7 +23,9 @@ Leave that terminal open and open [the app](http://127.0.0.1:3100). For producti
 
 The Vercel production link can open the workstation's complete quoting and sketch tools through an invitation. The relay keeps files, quotes, and settings in the existing workstation storage and preserves the Supabase learning connection. The workstation, relay, and tunnel must stay online during testing. Deployments without a share configuration continue to show the sample preview.
 
-The engineering readiness check passed. The tunnel returned 403 without the private origin credential and opened the workstation with it. The Next.js production build and TypeScript check passed.
+The engineering readiness check passed. The tunnel returned 403 without the private origin credential and opened the workstation with it. The Next.js production build, TypeScript check, 78 CAD tests, and draft pricing and approval regression passed. The default engineering rate card again uses the dated U.S. practice allowances. The share relay passes the complete file to the workstation after checking its size.
+
+Chrome verified the production invitation, both upload forms, and the existing desk pages. The fixture PDF produced two parts and a saved draft that opened through Vercel and the workstation at a $984.92 preliminary price. The sketch retained the original JPEG bytes and generated an illustrated PDF that downloaded and reopened. The test records are labeled in the existing desk. Gmail connection still needs the owner's account setup.
 
 ### Hosted preview without workstation storage · November 21, 2026
 

@@ -6,6 +6,7 @@ from math import pi
 from packages.cad.cost_engine import (
     CostInputError,
     CostSettings,
+    benchmark_demo_settings,
     calculate_cost,
     demo_settings,
     reprice_result,
@@ -85,6 +86,14 @@ def bend(**changes):
 
 
 class CostEngineTests(unittest.TestCase):
+    def test_blueprint_practice_card_uses_current_demo_rates(self):
+        card = benchmark_demo_settings()
+        self.assertTrue(card.demo)
+        self.assertEqual(card.materials[0].cost_per_lb, D("2.55"))
+        self.assertEqual(card.cut.center.hourly_rate, D("85"))
+        self.assertEqual(card.brake.center.hourly_rate, D("85"))
+        self.assertEqual(card.welds[0].center.hourly_rate, D("75"))
+
     def test_uncited_display_name_can_wait_but_quantity_cannot(self):
         p = plate()
         expected = calculate_cost(ast(p), rates())["estimated_cost_usd"]

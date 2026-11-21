@@ -159,18 +159,25 @@ def demo_settings() -> CostSettings:
 
 
 def benchmark_demo_settings() -> CostSettings:
-    from packages.costing.benchmark import DATE, LABOR, LABOR_BASIS, MACHINE, MACHINE_BASIS, STOCK
-
     example = demo_settings().model_dump(mode="json")
     example["snapshot_name"] = "U.S. shop benchmarks · Demo"
-    stock = example["materials"][0]
-    _, _, rate, source = STOCK["carbon"]
-    stock.update(cost_per_lb=str(rate), supplier=source, effective_on=DATE)
+    # Match the A36, MIG, plasma and brake allowances in the dated U.S. practice rate book.
+    effective_on = "2026-11-20"
+    example["materials"][0].update(
+        cost_per_lb="2.55",
+        supplier="U.S. practice allowance based on Online Metals retail plate listings",
+        effective_on=effective_on,
+    )
     for operation in (example["cut"], example["brake"]):
-        operation["center"].update(hourly_rate=str(MACHINE), effective_on=DATE, includes=MACHINE_BASIS)
+        operation["center"].update(
+            hourly_rate="85", effective_on=effective_on,
+            includes="Machine, operator and standard tooling. Special consumables separate.",
+        )
     for weld in example["welds"]:
-        weld["center"].update(hourly_rate=str(LABOR), effective_on=DATE,
-                              includes=LABOR_BASIS + " Filler and gas priced separately.")
+        weld["center"].update(
+            hourly_rate="75", effective_on=effective_on,
+            includes="Operator, machine and shop overhead. Filler and gas priced separately.",
+        )
     return CostSettings.model_validate(example)
 
 
