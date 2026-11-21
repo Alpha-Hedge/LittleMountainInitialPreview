@@ -22,14 +22,16 @@ if (/^[a-f0-9]{64}$/.test(ticket)) {
 } else document.querySelector('p').textContent = 'Use the full invitation link to open the shop desk.';`;
 const scriptHash = createHash("sha256").update(accessScript).digest("base64");
 
-function accessPage(invite: boolean) {
-  const message = invite ? "Opening the desk with your invitation…" : "Use the full invitation link to open the shop desk.";
+function accessPage(view: "legacy" | "locked" | "guest") {
+  const message = view === "legacy" ? "Opening the desk with your invitation…"
+    : view === "guest" ? "Your shop desk is ready to open." : "Use the full invitation link to open the shop desk.";
   return new NextResponse(`<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>Little Mountain Metalworks</title>
-<style>body{margin:0;background:#f2f6fb;color:#182638;font:17px/1.6 system-ui}main{max-width:32rem;margin:14vh auto;padding:2rem}h1{line-height:1.15}</style>
-</head><body><main><h1>Little Mountain Metalworks</h1><p role="status">${message}</p></main>
-${invite ? `<script>${accessScript}</script>` : ""}</body></html>`, {
-    status: invite ? 200 : 401,
+<style>body{margin:0;background:#f2f6fb;color:#182638;font:17px/1.6 system-ui}main{max-width:32rem;margin:14vh auto;padding:2rem}h1{line-height:1.15}a{display:inline-block;padding:.7rem 1.2rem;background:#075bb5;color:white;border-radius:.55rem;font-weight:600;text-decoration:none}</style>
+</head><body><main><h1>Little Mountain Metalworks</h1><p role="status">${message}</p>
+${view === "guest" ? '<a href="/">Open quote desk</a>' : ""}</main>
+${view === "legacy" ? `<script>${accessScript}</script>` : ""}</body></html>`, {
+    status: view === "locked" ? 401 : 200,
     headers: {
       ...idlePageHeaders,
       "Content-Type": "text/html; charset=utf-8",
@@ -47,6 +49,15 @@ function setSession(response: NextResponse, session: string) {
   return response;
 }
 
+function validLink(expires: string | null, signature: string | null, originKey: string, inviteHash: string) {
+  if (expires === null || !/^\d{10}$/.test(expires)) return false;
+  const now = Math.floor(Date.now() / 1000);
+  const deadline = Number(expires);
+  if (deadline < now || deadline > now + weekSeconds) return false;
+  const expected = createHmac("sha256", originKey).update(`lmm-desk-link:${inviteHash}:${expires}`).digest("hex");
+  return equalHex(expected, signature);
+}
+
 export function shareWorkstation(request: NextRequest): NextResponse | null {
   const endpoint = process.env.LMM_SHARE_ENDPOINT;
   const publicOrigin = process.env.LMM_SHARE_PUBLIC_ORIGIN;
@@ -62,16 +73,17 @@ export function shareWorkstation(request: NextRequest): NextResponse | null {
 
   const { pathname, search } = request.nextUrl;
   const session = createHmac("sha256", originKey).update(inviteHash).digest("hex");
+  const guest = /^\/invite\/(\d{10})-([a-f0-9]{64})$/.exec(pathname);
+  if (guest) {
+    if (request.method !== "GET" || !validLink(guest[1], guest[2], originKey, inviteHash)) return accessPage("locked");
+    return setSession(accessPage("guest"), session);
+  }
   if (pathname === invitePath) {
     if (request.method === "GET") {
       const expires = request.nextUrl.searchParams.get("expires");
       const signature = request.nextUrl.searchParams.get("signature");
-      if (expires === null && signature === null) return accessPage(true);
-      const now = Math.floor(Date.now() / 1000);
-      const deadline = Number(expires);
-      const validDeadline = expires !== null && /^\d{10}$/.test(expires) && deadline >= now && deadline <= now + weekSeconds;
-      const expected = createHmac("sha256", originKey).update(`lmm-desk-link:${inviteHash}:${expires}`).digest("hex");
-      if (!validDeadline || !equalHex(expected, signature)) return accessPage(false);
+      if (expires === null && signature === null) return accessPage("legacy");
+      if (!validLink(expires, signature, originKey, inviteHash)) return accessPage("locked");
       return setSession(NextResponse.redirect(new URL("/", publicOrigin), { status: 303, headers: idlePageHeaders }), session);
     }
     const invitation = request.headers.get("X-LMM-Invitation");
@@ -85,7 +97,7 @@ export function shareWorkstation(request: NextRequest): NextResponse | null {
   if (!equalHex(session, request.cookies.get(cookieName)?.value)) {
     return pathname.startsWith("/api/")
       ? NextResponse.json({ error: "Open the desk from your invitation link." }, { status: 401, headers: idlePageHeaders })
-      : accessPage(false);
+      : accessPage("locked");
   }
   if (request.method !== "GET" && request.method !== "HEAD" && request.headers.get("Origin") !== publicOrigin) {
     return new NextResponse(null, { status: 403, headers: idlePageHeaders });

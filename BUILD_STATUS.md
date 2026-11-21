@@ -35,6 +35,8 @@ Chrome verified the production invitation, both upload forms, and the existing d
 
 Signed invitations can also set the browser session through a server redirect. The signed link expires after seven days and works in browser views that omit URL fragments. The public address still requires a valid invitation before loading shop records.
 
+Guest invitations also work as a single signed path with no query parameters or fragments. The guest page stays on that shareable address and sets the session before the visitor chooses Open quote desk. Each browser opens the invitation separately, and the desk continues to require access before showing shop records.
+
 ### Hosted preview without workstation storage · November 21, 2026
 
 Vercel production and preview now serve a read-only sample quote and the Quick Guide. Hosted requests that need live workspace data show a preview page or return a clear API message. The workstation still opens its local SQLite workspace for editing and saving. Persistent hosted quote storage remains a separate setup step.
