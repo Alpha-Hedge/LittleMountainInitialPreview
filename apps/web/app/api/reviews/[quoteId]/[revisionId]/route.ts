@@ -6,7 +6,7 @@ import { runVision } from "@/lib/vision";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 900;
+export const maxDuration = 300;
 
 type Context = { params: Promise<{ quoteId: string; revisionId: string }> };
 

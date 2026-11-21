@@ -19,6 +19,10 @@ Leave that terminal open and open [the app](http://127.0.0.1:3100). For producti
 
 ## Completed milestones
 
+### Vercel Hobby function duration · November 21, 2026
+
+The drawing-review API now declares a 300-second limit, within the Vercel Hobby plan's maximum. The Next.js production build succeeded, its function manifest emitted the new limit, and the drawing-review regression passed with a fixture provider.
+
 ### Vercel Services repository configuration · November 21, 2026
 
 The repository has a `web` service for the site and its `/api/*` handlers, and an internal `api` service built from the engineering Dockerfile. The web server uses the Vercel-injected `NFIP_INTERNAL_API_URL` at runtime when available. The workstation keeps its existing Compose URL and server-side bearer credential. The repository configuration is documented in [README.md](README.md).
