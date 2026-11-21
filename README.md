@@ -24,7 +24,7 @@ Use the repository root as the Vercel project directory. The `web` service owns 
 
 Use `vercel dev --local` from the repository root to test the service routing without linking a Vercel project. Install the workspace dependencies first and run Docker on the same host as the CLI. The FastAPI image listens on port 8140. A hosted Vercel container environment would need `PORT=8140` to match it.
 
-This configuration covers the two HTTP services. A hosted shop desk also needs persistent storage for quotes, a reachable PostgreSQL, Redis, and S3-compatible object store, and a running Celery worker. The current local SQLite database and Compose volumes remain the workstation's storage. See [Vercel Services](https://vercel.com/docs/services), [service bindings](https://vercel.com/docs/services/bindings), and [container ports](https://vercel.com/docs/functions/runtimes/container#port-resolution).
+Vercel production and preview deployments serve a read-only example quote and the quick guide. The same deployment keeps live quote, upload, and settings routes closed while the hosted desk lacks storage. The local workstation and `vercel dev --local` continue to use SQLite and Compose. A writable hosted desk needs persistent quote storage, a reachable PostgreSQL, Redis and S3-compatible object store, and a running Celery worker. See [Vercel Services](https://vercel.com/docs/services), [service bindings](https://vercel.com/docs/services/bindings), and [function filesystem support](https://vercel.com/docs/functions/runtimes#file-system-support).
 
 ## Review a drawing and price
 

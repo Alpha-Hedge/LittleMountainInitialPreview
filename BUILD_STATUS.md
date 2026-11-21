@@ -19,6 +19,12 @@ Leave that terminal open and open [the app](http://127.0.0.1:3100). For producti
 
 ## Completed milestones
 
+### Hosted preview without workstation storage · November 21, 2026
+
+Vercel production and preview now serve a read-only sample quote and the Quick Guide. Hosted requests that need live workspace data show a preview page or return a clear API message. The workstation still opens its local SQLite workspace for editing and saving. Persistent hosted quote storage remains a separate setup step.
+
+The Next.js production build passed. An isolated HTTP test checked the hosted homepage, sample quote, sketch and settings pages, guide, and rejected API writes. It verified the hosted mode opened no SQLite database and the development mode still opened its local database and quote API.
+
 ### Vercel Hobby function duration · November 21, 2026
 
 The drawing-review API now declares a 300-second limit, within the Vercel Hobby plan's maximum. The Next.js production build succeeded, its function manifest emitted the new limit, and the drawing-review regression passed with a fixture provider.
