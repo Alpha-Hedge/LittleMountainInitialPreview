@@ -8,7 +8,7 @@ export function engineeringConnection() {
   if (path.resolve(root, process.env.LMM_DATA_DIR || "data") !== path.resolve(root, process.env.NFIP_ARCHIVE_DATA_DIR || "data")) return null;
   const file = path.resolve(root, process.env.NFIP_ARCHIVE_ENV || ".env.nfip");
   const settings = existsSync(file) ? parseEnv(readFileSync(file, "utf8")) : {};
-  const endpoint = process.env.NFIP_API_URL ?? settings.NFIP_API_URL;
+  const endpoint = process.env.NFIP_INTERNAL_API_URL ?? process.env.NFIP_API_URL ?? settings.NFIP_API_URL;
   const token = process.env.NFIP_API_TOKEN ?? settings.NFIP_API_TOKEN;
   if (!endpoint || !token) return null;
   const url = new URL(endpoint);

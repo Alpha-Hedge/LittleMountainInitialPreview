@@ -19,6 +19,12 @@ Leave that terminal open and open [the app](http://127.0.0.1:3100). For producti
 
 ## Completed milestones
 
+### Vercel Services repository configuration · November 21, 2026
+
+The repository has a `web` service for the site and its `/api/*` handlers, and an internal `api` service built from the engineering Dockerfile. The web server uses the Vercel-injected `NFIP_INTERNAL_API_URL` at runtime when available. The workstation keeps its existing Compose URL and server-side bearer credential. The repository configuration is documented in [README.md](README.md).
+
+The configuration passed the published Vercel schema checks and the web app passed TypeScript checking. A local Next.js smoke test used an HTTP stand-in to verify that blueprint and sketch requests follow the injected binding and preserve server authorization. The full `vercel dev --local` run detected both services, then stopped on a Windows symlink permission error. The Linux retry stopped when WSL stopped responding. Hosted quote storage and worker services are outside this configuration milestone.
+
 ### Full-width workspace layout and controls · November 21, 2026
 
 The app now fills the browser window with an aligned header and navigation rail. The Quote Desk presents the latest draft and its estimated price alongside the sketch and drawing-review shortcuts. Shared card padding, row alignment, borders, selected tabs, and updated SVG icons carry through quote intake, sketch review, and shop settings.

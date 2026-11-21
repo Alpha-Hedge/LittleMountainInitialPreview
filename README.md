@@ -18,6 +18,14 @@ On subsequent starts, open **Open Quote Desk.cmd**. Use `.\quote.cmd dev` for de
 
 Windows installations that support the native CAD libraries can run `.\scripts\setup-engineering.ps1` with Python 3.12 available through the Python launcher, or pass `-Python` with its executable path. On Linux, create `.venv` with Python 3.12 and install `requirements-engineering.txt`. Configuration and renewal of the API, database and object-store credentials are covered in the [infrastructure guide](infra/README.md).
 
+## Vercel Services configuration
+
+Use the repository root as the Vercel project directory. The `web` service owns the application pages and the Next.js `/api/*` handlers. The `api` service builds FastAPI from the repository's Dockerfile so it can import the shared Python packages. It has no public rewrite. Next.js calls it at runtime through the Vercel-injected `NFIP_INTERNAL_API_URL`. Keep `NFIP_API_TOKEN` as a server-side secret shared by the two services and leave the binding variable to Vercel. The regular workstation launcher continues to use `NFIP_API_URL` or the private Compose settings.
+
+Use `vercel dev --local` from the repository root to test the service routing without linking a Vercel project. Install the workspace dependencies first and run Docker on the same host as the CLI. The FastAPI image listens on port 8140. A hosted Vercel container environment would need `PORT=8140` to match it.
+
+This configuration covers the two HTTP services. A hosted shop desk also needs persistent storage for quotes, a reachable PostgreSQL, Redis, and S3-compatible object store, and a running Celery worker. The current local SQLite database and Compose volumes remain the workstation's storage. See [Vercel Services](https://vercel.com/docs/services), [service bindings](https://vercel.com/docs/services/bindings), and [container ports](https://vercel.com/docs/functions/runtimes/container#port-resolution).
+
 ## Review a drawing and price
 
 Open a saved quote and choose **Drawing & quote workspace**. Select a numbered reading to see its source. **Edit drawing measurements** opens the revision for changes. A valid measurement rebuilds the review PDF and audited DXF in memory. Save the drawing revision and confirm its checks to issue shop files. On older blueprints, **Align outline to page** registers a flat view by its lower-left, lower-right and upper-left corners.

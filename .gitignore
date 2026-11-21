@@ -1,6 +1,7 @@
 node_modules/
 .next/
 .next-*/
+.vercel/
 data/
 .local-vision/
 .test-results/
