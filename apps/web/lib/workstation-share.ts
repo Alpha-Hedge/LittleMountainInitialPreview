@@ -18,7 +18,7 @@ if (/^[a-f0-9]{64}$/.test(ticket)) {
       location.replace('/');
     })
     .catch(() => document.querySelector('p').textContent = 'This invitation could not open. Ask for the full link again.');
-}`;
+} else document.querySelector('p').textContent = 'Use the full invitation link to open the shop desk.';`;
 const scriptHash = createHash("sha256").update(accessScript).digest("base64");
 
 function accessPage(invite: boolean) {
@@ -35,7 +35,7 @@ ${invite ? `<script>${accessScript}</script>` : ""}</body></html>`, {
       "Content-Security-Policy": `default-src 'none'; script-src 'sha256-${scriptHash}'; style-src 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'`,
     },
   });
-} else document.querySelector('p').textContent = 'Use the full invitation link to open the shop desk.';
+}
 
 function equalHex(expected: string, provided: string | null | undefined) {
   return Boolean(provided && /^[a-f0-9]{64}$/.test(provided) && timingSafeEqual(Buffer.from(expected, "hex"), Buffer.from(provided, "hex")));
