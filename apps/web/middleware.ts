@@ -22,6 +22,7 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
+  runtime: "nodejs",
   matcher: [
     "/", "/api/:path*", "/quotes/:path*", "/blueprints/:path*", "/sketches/:path*",
     "/inbox/:path*", "/jobs/:path*", "/settings/:path*", "/learning/:path*",
